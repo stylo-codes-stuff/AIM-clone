@@ -12,12 +12,7 @@
     gap: 10px;
   }
   
-  .join {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-  }
-  
+
   .create-btn {
     width: 100%;
   }
@@ -40,7 +35,12 @@
     flex: 1;
     width: 100%;
   }
-  
+  #public_rooms{
+      overflow-y: scroll;
+      flex: 1;
+      width: 100%;
+    
+  }
   .inputs {
     padding: 10px;
     display: flex;

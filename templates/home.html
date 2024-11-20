@@ -1,6 +1,7 @@
 {% extends 'base.html' %} {% block content %}
 <form method="post" class="buttons">
-  <h3>Enter The Chat Room</h3>
+  
+  <h3><img src="{{url_for('static', filename='aim2.jpg')}}" width="300px"></img></h3>
   <div>
     <label>Name:</label>
     <input
@@ -10,15 +11,24 @@
       value="{{name}}"
     />
   </div>
-  <div class="join">
+  <div>
     <input type="text" placeholder="Room Code" name="code" value="{{code}}" />
     <button type="submit" name="join">Join a Room</button>
   </div>
   <button type="submit" name="create" class="create-btn">Create a Room</button>
+  <input type="checkbox" name="private" value="private"></input>
+  <div>
+    <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+<label for="vehicle1"> Create private room</label>
+  </div>
+
   {% if error %}
   <ul>
     <li>{{error}}</li>
   </ul>
   {% endif %}
 </form>
+<div id="public_rooms">
+  placeholder
+</div>
 {% endblock %}

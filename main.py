@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, session, redirect
 from flask_socketio import join_room, leave_room, send,SocketIO,ConnectionRefusedError
 import os
 import random
-from string import ascii_uppercase
+from string import ascii_letters,digits
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "hjhjsdahhds"
 #config for getting it to run on codermerlin
@@ -11,7 +11,6 @@ socketio = SocketIO(app)
 rooms = {}
 socketCount = 0
 allocatedMem = 300
-print(allocatedMem)
 
 #memory check function
 def memCheck(room):
@@ -25,11 +24,11 @@ def memCheck(room):
 
 
 #room code generator
-def generate_unique_code(length):
+def generate_unique_b64(length):
     while True:
         code = ""
         for _ in range(length):
-            code += random.choice(ascii_uppercase)
+            code += random.choice(ascii_letters+digits)
         
         if code not in rooms:
             break
@@ -57,7 +56,7 @@ def home():
     # if you enter a code set it to room else if the code isnt in the dict return an error
         room = code
         if create != False:
-            room = generate_unique_code(4)
+            room = generate_unique_b64(4)
             rooms[room] = {"members": 0, "messages": []}
         elif code not in rooms:
             return render_template("home.html", error="Room does not exist.", code=code, name=name)
@@ -70,15 +69,20 @@ def home():
 
 
 
-
 @app.route("/room")
 def room():
+    global rooms
+    print(rooms)
     #if you try and load the room route without being in a room, without a name, or if the room no longer exists, it redirects you to the homepage
     room = session.get("room")
     if room is None or session.get("name") is None or room not in rooms:
         return redirect("/")
     #all goes well? cool! you get loaded into a room
     return render_template("room.html", code=room, messages=rooms[room]["messages"])
+
+@app.route("/settings")
+def settings():
+    return render_template("settings.html")
 #socketio message event listener
 @socketio.on("message")
 def message(data):
@@ -94,6 +98,7 @@ def message(data):
     send(content, to=room)
     rooms[room]["messages"].append(content)
     print(f"{session.get('name')} said: {data['data']}")
+
 
 
 
@@ -147,4 +152,4 @@ def disconnect():
 
 
 if __name__ == "__main__":
-    socketio.run(app,host="0.0.0.0", port="12199",debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app,host="0.0.0.0", port="8080",debug=True)
